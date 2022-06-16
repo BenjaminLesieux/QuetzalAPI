@@ -1,15 +1,9 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
+from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 
 
 class Candidate(models.Model):
-    candidate_id = models.UUIDField(primary_key=True)
+    candidate_id = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=100, blank=True, null=True)
     surname = models.CharField(max_length=100, blank=True, null=True)
     website = models.CharField(max_length=100, blank=True, null=True)
@@ -21,10 +15,10 @@ class Candidate(models.Model):
 
 
 class Election(models.Model):
-    election_id = models.UUIDField(primary_key=True)
+    election_id = models.BigIntegerField(primary_key=True)
     start_end = models.DateField(blank=True, null=True)
     end_date = models.CharField(max_length=50, blank=True, null=True)
-    type = models.ForeignKey('elections.ElectionType', models.DO_NOTHING)
+    type = models.ForeignKey('ElectionType', models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -51,7 +45,7 @@ class ElectionType(models.Model):
 
 
 class Logs(models.Model):
-    voter = models.OneToOneField('login.UserInfo', models.DO_NOTHING, primary_key=True)
+    voter = models.OneToOneField('Userinfo', models.DO_NOTHING, primary_key=True)
     round = models.ForeignKey('Round', models.DO_NOTHING)
 
     class Meta:
@@ -71,7 +65,7 @@ class Participate(models.Model):
 
 
 class Party(models.Model):
-    party_id = models.UUIDField(primary_key=True)
+    party_id = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=100, blank=True, null=True)
     logo = models.CharField(max_length=100, blank=True, null=True)
 
@@ -81,7 +75,7 @@ class Party(models.Model):
 
 
 class Permissions(models.Model):
-    voter = models.OneToOneField('login.UserInfo', models.DO_NOTHING, primary_key=True)
+    voter = models.OneToOneField('Userinfo', models.DO_NOTHING, primary_key=True)
     type = models.ForeignKey(ElectionType, models.DO_NOTHING)
 
     class Meta:
@@ -91,7 +85,7 @@ class Permissions(models.Model):
 
 
 class Round(models.Model):
-    round_id = models.UUIDField(primary_key=True)
+    round_id = models.BigIntegerField(primary_key=True)
     election_date = models.DateField(blank=True, null=True)
     number = models.IntegerField(blank=True, null=True)
 
@@ -110,8 +104,21 @@ class Submit(models.Model):
         unique_together = (('round', 'vote'),)
 
 
+class Userinfo(AbstractBaseUser):
+    voter_id = models.BigIntegerField(primary_key=True)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    surname = models.CharField(max_length=100, blank=True, null=True)
+    password = models.CharField(max_length=100, blank=True, null=True)
+
+    USERNAME_FIELD = 'voter_id'
+
+    class Meta:
+        managed = False
+        db_table = 'UserInfo'
+
+
 class Vote(models.Model):
-    vote_id = models.UUIDField(primary_key=True)
+    vote_id = models.BigIntegerField(primary_key=True)
     candidate = models.ForeignKey(Candidate, models.DO_NOTHING)
 
     class Meta:
