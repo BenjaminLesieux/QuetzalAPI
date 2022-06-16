@@ -1,7 +1,7 @@
 import uuid
 
 from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import UserManager, AbstractUser
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
@@ -11,5 +11,3 @@ class Voter(AbstractUser):
     username = models.CharField(max_length=200, blank=True, unique=True)
     name = models.CharField(max_length=200, blank=True)
     surname = models.CharField(max_length=200, blank=True)
-
-    type_id = models.ManyToManyField(ElectionType)
