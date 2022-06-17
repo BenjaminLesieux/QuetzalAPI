@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate
+from django.contrib.sites import requests
 from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework import status
@@ -22,19 +23,10 @@ class RegisterView(APIView):
                 "last_name": request.data['name'],
                 "first_name": request.data['surname'],
                 "username": request.data['username'],
-                "token": self.client.post()
             }
 
-            voter = serializer.save()
-            authenticate(voter)
+            serializer.save()
+
             return Response(return_data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class LoginView(APIView):
-
-    permission_classes = [AllowAny]
-
-    def get(self, request):
-        pass
