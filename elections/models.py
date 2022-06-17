@@ -1,16 +1,26 @@
 from django.db import models
 
 
+class Party(models.Model):
+    party_id = models.BigIntegerField(primary_key=True)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    logo = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'elections_party'
+
+
 class Candidate(models.Model):
     candidate_id = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=100, blank=True, null=True)
     surname = models.CharField(max_length=100, blank=True, null=True)
     website = models.CharField(max_length=100, blank=True, null=True)
-    party = models.ForeignKey('Party', models.DO_NOTHING)
+    party_id = models.ForeignKey('Party', models.DO_NOTHING)
 
     class Meta:
         managed = False
-        db_table = 'Candidate'
+        db_table = 'elections_candidate'
 
 
 class Election(models.Model):
@@ -21,7 +31,7 @@ class Election(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'Election'
+        db_table = 'elections_election'
 
 
 class ElectionProgress(models.Model):
@@ -30,7 +40,7 @@ class ElectionProgress(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'ElectionProgress'
+        db_table = 'elections_electionprogress'
         unique_together = (('election', 'round'),)
 
 
@@ -40,7 +50,7 @@ class ElectionType(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'ElectionType'
+        db_table = 'elections_electiontype'
 
 
 class Logs(models.Model):
@@ -49,7 +59,7 @@ class Logs(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'Logs'
+        db_table = 'elections_logs'
         unique_together = (('voter', 'round'),)
 
 
@@ -59,18 +69,8 @@ class Participate(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'Participate'
+        db_table = 'elections_participate'
         unique_together = (('election', 'candidate'),)
-
-
-class Party(models.Model):
-    party_id = models.BigIntegerField(primary_key=True)
-    name = models.CharField(max_length=100, blank=True, null=True)
-    logo = models.CharField(max_length=100, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'Party'
 
 
 class Permissions(models.Model):
@@ -79,7 +79,7 @@ class Permissions(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'Permissions'
+        db_table = 'elections_permissions'
         unique_together = (('voter', 'type'),)
 
 
@@ -90,17 +90,7 @@ class Round(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'Round'
-
-
-class Submit(models.Model):
-    round = models.OneToOneField(Round, models.DO_NOTHING, primary_key=True)
-    vote = models.ForeignKey('Vote', models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'Submit'
-        unique_together = (('round', 'vote'),)
+        db_table = 'elections_round'
 
 
 class Vote(models.Model):
@@ -109,4 +99,15 @@ class Vote(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'Vote'
+        db_table = 'elections_vote'
+
+
+class Submit(models.Model):
+    round = models.OneToOneField(Round, models.DO_NOTHING, primary_key=True)
+    vote = models.ForeignKey(Vote, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'elections_submit'
+        unique_together = (('round', 'vote'),)
+

@@ -4,10 +4,29 @@ from authentification.models import Voter
 
 
 class VoterSerializer(serializers.ModelSerializer):
-    model = Voter
-    fields = (
-        'voter_id',
-        'email',
-        'name',
-        'surname'
-    )
+    class Meta:
+        model = Voter
+        fields = (
+            'voter_id',
+            'email',
+            'name',
+            'surname',
+            'password',
+            'username'
+        )
+
+    def save(self, **kwargs):
+        voter = Voter(
+            email=self.validated_data['email'],
+            name=self.validated_data['name'],
+            surname=self.validated_data['surname'],
+            last_name=self.validated_data['name'],
+            first_name=self.validated_data['surname'],
+            voter_id=self.validated_data['voter_id'],
+            password=self.validated_data['password'],
+            username=self.validated_data['username']
+        )
+
+        voter.save()
+
+        return voter
