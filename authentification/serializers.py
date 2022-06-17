@@ -1,5 +1,6 @@
+from django.contrib.auth import password_validation
 from rest_framework import serializers
-
+from django.contrib.auth.password_validation import validate_password
 from authentification.models import Voter
 
 
@@ -26,7 +27,12 @@ class VoterSerializer(serializers.ModelSerializer):
             username=self.validated_data['username']
         )
 
-        voter.set_password(self.validated_data['password'])
+        password = (self.validated_data['password'])
+        if len(password) < 12:
+            raise serializers.ValidationError({'password': 'password too short'})
+        elif sum(1 for c in password if c.isupper()) < 1:
+            raise serializers.ValidationError({'password': 'password need a captial char'})
+        voter.set_password(password)
         voter.save()
 
         return voter

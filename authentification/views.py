@@ -6,6 +6,7 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.contrib.auth.password_validation import validate_password
 
 from authentification.serializers import VoterSerializer
 
@@ -22,7 +23,7 @@ class RegisterView(APIView):
                 "last_name": request.data['name'],
                 "first_name": request.data['surname'],
                 "username": request.data['username'],
-                "token": self.client.post()
+
             }
 
             voter = serializer.save()
