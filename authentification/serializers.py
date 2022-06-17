@@ -23,10 +23,10 @@ class VoterSerializer(serializers.ModelSerializer):
             last_name=self.validated_data['name'],
             first_name=self.validated_data['surname'],
             voter_id=self.validated_data['voter_id'],
-            password=self.validated_data['password'],
             username=self.validated_data['username']
         )
 
+        voter.set_password(self.validated_data['password'])
         voter.save()
 
         return voter
