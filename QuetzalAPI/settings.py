@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3@8hi$kp9@j(haibiy^zh0yb_xw-^f)(zo193fc+k0(xg+kq2t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["10.3.200.171"]
 
 
 # Application definition
@@ -37,6 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'elections',
+    'authentification',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
+    'drf_yasg',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -47,7 +54,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = False
 
 ROOT_URLCONF = 'QuetzalAPI.urls'
 
@@ -76,8 +86,12 @@ WSGI_APPLICATION = 'QuetzalAPI.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': "quetzal",
+        'USER': "root",
+        'PASSWORD': "password",
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
@@ -99,6 +113,15 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+               'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+                'rest_framework.permissions.IsAuthenticated',
+    ),
+}
 
 
 # Internationalization
@@ -122,3 +145,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'authentification.Voter'
+
