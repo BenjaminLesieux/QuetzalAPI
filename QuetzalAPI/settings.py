@@ -57,9 +57,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    'http://10.3.203.64:8080',
-]
+CORS_ORIGIN_ALLOW_ALL = False
 
 ROOT_URLCONF = 'QuetzalAPI.urls'
 

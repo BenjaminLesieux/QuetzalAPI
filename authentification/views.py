@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.contrib.sites import requests
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -25,6 +25,7 @@ class RegisterView(APIView):
                 "username": request.data['username'],
             }
 
+            # saving the new created user into the database
             serializer.save()
 
             return Response(return_data, status=status.HTTP_201_CREATED)
