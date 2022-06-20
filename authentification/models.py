@@ -11,3 +11,5 @@ class Voter(AbstractUser):
     username = models.CharField(max_length=200, blank=True, unique=True)
     name = models.CharField(max_length=200, blank=True)
     surname = models.CharField(max_length=200, blank=True)
+
+    permissions = models.ManyToManyField('elections.ElectionType')
