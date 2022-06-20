@@ -12,10 +12,16 @@ class ElectionType(models.Model):
     type_id = models.IntegerField(primary_key=True)
     type = models.CharField(max_length=100, blank=True)
 
+    def __str__(self):
+        return f'{self.type} ({self.type_id})'
+
 
 class Round(models.Model):
     round_id = models.IntegerField(primary_key=True)
     date = models.DateField(blank=True)
+
+    def __str__(self):
+        return {"round_id": self.round_id, "date": self.date}
 
 
 class Election(models.Model):
@@ -23,6 +29,9 @@ class Election(models.Model):
     type = models.ForeignKey(ElectionType, on_delete=models.CASCADE)
 
     progress = models.ManyToManyField(Round)
+
+    def __str__(self):
+        return str(self.election_id)
 
 
 class Candidate(models.Model):

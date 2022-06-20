@@ -23,7 +23,6 @@ class RegisterView(APIView):
                 "last_name": request.data['name'],
                 "first_name": request.data['surname'],
                 "username": request.data['username'],
-
             }
 
             voter = serializer.save()

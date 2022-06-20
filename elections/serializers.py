@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from elections.models import Vote
+from elections.models import Vote, Election
 
 
 class VoteSerializer(serializers.Serializer):
@@ -12,3 +12,11 @@ class VoteSerializer(serializers.Serializer):
 
     def save(self):
         pass
+
+
+class ElectionSerializer(serializers.Serializer):
+    model = Election
+    fields = (
+        'election_id',
+        'type'
+    )

@@ -1,10 +1,8 @@
 from django.urls import path
 
-from elections.views import VoteCreationView
+from elections.views import ElectionsView, ElectionInfoView
 
 urlpatterns = [
-    path('api/v1/elections/<int:elections_id>/<int:round_id>/',
-         VoteCreationView.as_view(),
-         name='vote creation'
-         )
+    path("", ElectionsView.as_view(), name='see all elections'),
+    path("/<int:election_id>", ElectionInfoView.as_view(), name='election info')
 ]

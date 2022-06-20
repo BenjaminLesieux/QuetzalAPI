@@ -15,23 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
-from drf_yasg import openapi
+from rest_framework.schemas import get_schema_view
 
-from drf_yasg.views import get_schema_view
-
-schema_view = get_schema_view(
-    openapi.Info(
-        title="Quetzal API",
-        default_version="v1",
-        description="REST implementation of Quetzal"
-    )
-)
+schema_view = get_schema_view(title='QuetzalAPI')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('djoser.urls')),
+    path('api/v1/elections', include('elections.urls')),
     path('api/v1/auth/', include('authentification.urls')),
-    re_path(r'^api/v1/docs/$',
-            schema_view.with_ui("swagger", cache_timeout=0),
-            ),
+    path('api', schema_view)
 ]
