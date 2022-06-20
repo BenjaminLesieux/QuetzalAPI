@@ -13,9 +13,16 @@ class ElectionType(models.Model):
     type = models.CharField(max_length=100, blank=True)
 
 
+class Round(models.Model):
+    round_id = models.IntegerField(primary_key=True)
+    date = models.DateField(blank=True)
+
+
 class Election(models.Model):
     election_id = models.IntegerField(primary_key=True)
     type = models.ForeignKey(ElectionType, on_delete=models.CASCADE)
+
+    progress = models.ManyToManyField(Round)
 
 
 class Candidate(models.Model):
@@ -29,21 +36,8 @@ class Candidate(models.Model):
 
 class Vote(models.Model):
     vote_id = models.UUIDField(primary_key=True)
-    candidate_id = models.ForeignKey(Candidate, on_delete=models.CASCADE)
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
 
-
-class Round(models.Model):
-    round_id = models.IntegerField(primary_key=True)
-    date = models.DateField(blank=True)
-
-
-class ElectionProgress(models.Model):
-    election = models.ManyToManyField(Election)
-    round = models.ManyToManyField(Round)
-
-
-class VoteSubmission(models.Model):
-    round = models.ManyToManyField(Round)
-    vote = models.ForeignKey(Vote, on_delete=models.CASCADE)
+    submissions = models.ManyToManyField(Round)
 
 
