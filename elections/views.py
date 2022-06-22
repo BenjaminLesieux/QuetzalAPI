@@ -1,5 +1,4 @@
 from rest_framework import status
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -17,7 +16,7 @@ class ElectionsView(APIView):
         data = {}
 
         for election in elections:
-            data[election.__str__()] = election.type.__str__()
+            data[election.election_id] = election.type.__str__()
 
         return Response(data, status=status.HTTP_200_OK)
 

@@ -7,13 +7,21 @@ class Party(models.Model):
     website = models.CharField(max_length=100, blank=True)
     logo = models.CharField(max_length=700, blank=True)
 
+    def __str__(self):
+        return {
+            "party_id": self.party_id,
+            "name": self.name,
+            "website": self.website,
+            "logo": self.logo
+        }
+
 
 class ElectionType(models.Model):
     type_id = models.IntegerField(primary_key=True)
     type = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
-        return f'{self.type} ({self.type_id})'
+        return f'{self.type}'
 
 
 class Round(models.Model):
@@ -31,7 +39,10 @@ class Election(models.Model):
     progress = models.ManyToManyField(Round)
 
     def __str__(self):
-        return str(self.election_id)
+        return {
+            "election_id": self.election_id,
+            "type": self.type.__str__()
+        }
 
 
 class Candidate(models.Model):
@@ -42,11 +53,25 @@ class Candidate(models.Model):
     party = models.ForeignKey(Party, on_delete=models.CASCADE)
     elections = models.ManyToManyField(Election)
 
+    def __str__(self):
+        return {
+            "candidate_id": self.candidate_id,
+            "last_name": self.last_name,
+            "first_name": self.first_name,
+            "party_id": self.party,
+        }
+
 
 class Vote(models.Model):
     vote_id = models.UUIDField(primary_key=True)
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
 
     submissions = models.ManyToManyField(Round)
+
+    def __str__(self):
+        return {
+            "vote_id": self.vote_id,
+            "candidate": self.candidate.__str__()
+        }
 
 
