@@ -23,7 +23,4 @@ def symbol_validator(password):
 
 
 def is_valid(password):
-    number_validator(password),
-    uppercase_validator(password),
-    lowercase_validator(password),
-    symbol_validator(password),
+    return number_validator(password) and uppercase_validator(password) and lowercase_validator(password) and symbol_validator(password)

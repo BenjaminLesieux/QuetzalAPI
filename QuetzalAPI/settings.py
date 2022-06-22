@@ -125,7 +125,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = ("http://10.3.202.2:8080", "http://10.3.217.230:8081",)
+CORS_ORIGIN_WHITELIST = ("http://10.3.202.2:8080", "http://10.3.217.230:8081", "http://localhost:8080")
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
@@ -149,3 +149,20 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'authentification.Voter'
+
+DJOSER = {
+    'SEND_CONFIRMATION_EMAIL': True,
+    'ACTIVATION_URL': 'api/v1/auth/activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'SERIALIZERS': {
+        #'user_create': 'authentification.serializers.VoterSerializer'
+    },
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = "587"
+EMAIL_HOST_USER = 'app.quetzal@gmail.com'
+EMAIL_HOST_PASSWORD = 'rbrnksuegqshoumg'
+EMAIL_USE_TLS = True
+SITE_NAME = "Quetzal"

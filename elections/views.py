@@ -45,3 +45,8 @@ class ElectionInfoView(APIView):
             "election": election.__str__(),
             "type_information": election.type.__str__(),
         } | data, status=status.HTTP_200_OK)
+
+class VoteCreationView(APIView):
+
+    def post(self):
+        pass
