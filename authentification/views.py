@@ -1,17 +1,10 @@
 import requests
-from django.contrib.auth import authenticate
-from django.http import HttpResponse
-from django.shortcuts import render
 from rest_framework import status
-from rest_framework.decorators import authentication_classes, permission_classes, api_view
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.decorators import permission_classes, api_view
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.contrib.auth.password_validation import validate_password
-
-from authentification.serializers import VoterSerializer
 
 
+@permission_classes('AllowAny', )
 @api_view(('GET',))
 def activation_view(request, uid, token):
     requests.post("http://10.3.201.28:8000/api/v1/users/activation/",
