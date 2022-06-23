@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-3@8hi$kp9@j(haibiy^zh0yb_xw-^f)(zo193fc+k0(xg+kq2t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.3.201.28']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -151,9 +151,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'authentification.Voter'
 
 DJOSER = {
+    'SET_PASSWORD_RETYPE': True,
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
+    'PASSWORD_RESET_CONFIRM_URL': 'api/v1/auth/password/reset/confirm/{uid}/{token}',
     'SEND_CONFIRMATION_EMAIL': True,
     'ACTIVATION_URL': 'api/v1/auth/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'SERIALIZERS': {
         #'user_create': 'authentification.serializers.VoterSerializer'
     },

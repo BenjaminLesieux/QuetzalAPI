@@ -4,5 +4,6 @@ from authentification import views
 
 urlpatterns = [
    path('', include('djoser.urls.authtoken')),
-   path('activate/<uid>/<token>', views.activation_view)
+   path('activate/<uid>/<token>', views.activation_view),
+   path('password/reset/confirm/<uid>/<token>', views.reset_password_view),
 ]

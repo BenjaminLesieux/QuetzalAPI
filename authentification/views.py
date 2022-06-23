@@ -13,3 +13,16 @@ def activation_view(request, uid, token):
                       "token": token
                   })
     return Response({'msg': 'The account was created !'}, status=status.HTTP_200_OK)
+
+
+@permission_classes('AllowAny', )
+@api_view(('GET',))
+def reset_password_view(request, new_password, re_new_password, uid, token):
+    requests.post("http://10.3.201.28:8000/api/v1/users/reset_password_confirm/",
+                  json={
+                      "new_password": new_password,
+                      "re_new_password": re_new_password,
+                      "uid": uid,
+                      "token": token
+                  })
+    return Response({'msg': 'PASSWORD RESET !'}, status=status.HTTP_200_OK)
