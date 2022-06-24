@@ -1,3 +1,4 @@
+import json
 import uuid
 
 from rest_framework import status
@@ -12,7 +13,6 @@ from elections.models import Election, Vote, Candidate, Round
 
 
 class ElectionsView(APIView):
-
     permission_classes = [AllowAny]
 
     def get(self, request):
@@ -43,7 +43,6 @@ class ElectionsView(APIView):
 
 
 class ElectionInfoView(APIView):
-
     permission_classes = [AllowAny]
 
     def get(self, request, election_id):
@@ -70,13 +69,12 @@ class ElectionInfoView(APIView):
                 election_candidates.append(candidate)
 
         return Response({
-            "election": election.__str__(),
-            "type_information": election.type.__str__(),
-        } | data, status=status.HTTP_200_OK)
+                            "election": election.__str__(),
+                            "type_information": election.type.__str__(),
+                        } | data, status=status.HTTP_200_OK)
 
 
 class VoteCreationView(APIView):
-
     permission_classes = [TokenAuthentication]
 
     def post(self, request):
@@ -133,3 +131,74 @@ class VoteCreationView(APIView):
                     f' at round {body["round_id"]}'},
             status=status.HTTP_200_OK
         )
+
+
+class CandidatesView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, election_id):
+
+        elections = Election.objects.all()
+
+        if not elections.filter(election_id=election_id).exists():
+            return Response(
+                {"error": f'No election with this id {election_id} exists'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        all_candidates = Candidate.objects.all()
+        election_candidates = []
+
+        for candidate in all_candidates:
+            if candidate.elections.filter(election_id=election_id).exists():
+                election_candidates.append(candidate)
+
+        data = {}
+
+        for candidate in election_candidates:
+            data[candidate.candidate_id] = {
+                "last_name": candidate.last_name,
+                "first_name": candidate.first_name,
+                "candidate_photo": candidate.first_name,
+                "party": candidate.party.name,
+                "party_picture": candidate.party.logo,
+                "party_website": candidate.party.website
+            }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class CandidateInfoView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, election_id, candidate_id):
+        elections = Election.objects.all()
+
+        if not elections.filter(election_id=election_id).exists():
+            return Response(
+                {"error": f'No election with this id {election_id} exists'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        all_candidates = Candidate.objects.all()
+        election_candidates = []
+
+        candidate = all_candidates.filter(candidate_id=candidate_id).first()
+
+        if not candidate.elections.filter(election_id=election_id).exists():
+            return Response({
+                "error": f'No candidate with id {candidate_id} for election {election_id}'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        data = {
+            "last_name": candidate.last_name,
+            "first_name": candidate.first_name,
+            "candidate_photo": candidate.first_name,
+            "party": candidate.party.name,
+            "party_picture": candidate.party.logo,
+            "party_website": candidate.party.website
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
