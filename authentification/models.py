@@ -17,3 +17,6 @@ class Voter(AbstractUser):
     USERNAME_FIELD = 'electoral_number'
     REQUIRED_FIELDS = ('email', 'last_name', 'first_name', 'username')
 
+    def __str__(self):
+        return self.last_name + " " + self.first_name
+

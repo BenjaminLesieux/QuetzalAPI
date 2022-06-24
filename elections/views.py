@@ -1,9 +1,14 @@
+import uuid
+
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from elections.models import Election
+from authentification.models import Voter
+from elections.models import Election, Vote, Candidate, Round
 
 
 class ElectionsView(APIView):
@@ -13,6 +18,22 @@ class ElectionsView(APIView):
     def get(self, request):
 
         elections = Election.objects.all()
+
+        print(request.POST)
+
+        query_elections = []
+
+        # if a user parameter was sent in the request, we only send the elections in which
+        # the user has the permission to vote in
+        if 'voter_id' in request.POST:
+            voter = Voter.objects.all().get(voter_id=request.data["voter_id"])
+            for election in elections:
+                if voter.permissions.filter(type_id=election.type.type_id).exists():
+                    query_elections.append(election)
+
+        if len(query_elections) != 0:
+            elections = query_elections
+
         data = {}
 
         for election in elections:
@@ -41,12 +62,74 @@ class ElectionInfoView(APIView):
             round_counter += 1
             data[f'round_{round_counter}'] = round.__str__()
 
+        candidates = Candidate.objects.all()
+        election_candidates = []
+
+        for candidate in candidates:
+            if candidate.elections.filter(election_id=election_id).exists():
+                election_candidates.append(candidate)
+
         return Response({
             "election": election.__str__(),
             "type_information": election.type.__str__(),
         } | data, status=status.HTTP_200_OK)
 
+
 class VoteCreationView(APIView):
 
-    def post(self):
-        pass
+    permission_classes = [TokenAuthentication]
+
+    def post(self, request):
+        body = request.data
+        headers = request.META
+
+        new_vote = Vote.objects.create(
+            vote_id=uuid.uuid4(),
+            candidate_id=body['candidate_id']
+        )
+
+        election = Election.objects.all().filter(election_id=body['election_id'])
+
+        if not election.exists():
+            return Response(
+                {"error": f'The election of id {body["election_id"]} does not exist'}
+            )
+
+        user_id = Token.objects.get(key=headers["Authorization"]).user_id
+        user = Voter.objects.all().filter(voter_id=user_id)
+
+        if user.exists():
+            if not user.first().permissions.filter(type_id=election.type.type_id).exists():
+                return Response(
+                    {"error": f'tried to cast a vote without '
+                              f'the authorization for election {election.first().__str__()}'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        candidate = Candidate.objects.all().filter(candidate_id=body['candidate_id'])
+
+        if not candidate.exists():
+            return Response(
+                {"error": f'the candidate of id {body["candidate_id"]} does not exist'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        rnd = Round.objects.all().filter(round_id=body['round_id'])
+
+        # user should not be able to cast a vote in a round that doesn't correspond to the election
+        # he wants to vote in
+        if not rnd.exists() and not election.first().progress.filter(round_id=body["round_id"]).exists():
+            return Response(
+                {"error": f'the election of id {body["election_id"]} is not linked'
+                          f' with round of id {body["round_id"]}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        new_vote.submissions.add(body["round_id"])
+        new_vote.save()
+
+        return Response(
+            {"msg": f'The vote {new_vote.vote_id} has been fully registered of election of id {body["election_id"]}'
+                    f' at round {body["round_id"]}'},
+            status=status.HTTP_200_OK
+        )

@@ -7,7 +7,7 @@ from rest_framework.response import Response
 @permission_classes('AllowAny', )
 @api_view(('GET',))
 def activation_view(request, uid, token):
-    requests.post("http://10.3.201.28:8000/api/v1/users/activation/",
+    requests.post("http://10.13.201.28:8000/api/v1/users/activation/",
                   json={
                       "uid": uid,
                       "token": token
