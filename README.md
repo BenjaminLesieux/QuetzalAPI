@@ -8,6 +8,10 @@ Quetzal est une plateforme de vote en ligne qui a pour but de rendre le vote acc
 ![Logo](https://cdn.discordapp.com/attachments/980881825654251600/989795697773670420/Quetzal_Light_dark.png)
 
 
+## Frontend
+
+- [@Link to frontend](https://github.com/BenjaminLesieux/QuetzalFrontend)
+
 ## Tech Stack
 
 **Client:** Vue
