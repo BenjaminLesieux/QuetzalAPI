@@ -1,14 +1,10 @@
-import re
 import uuid
 
 from djoser.serializers import UserCreateSerializer
 
-from authentification.validators import is_valid
-from django.contrib.auth import password_validation
+from elections.validators import is_valid
 from rest_framework import serializers
-from django.contrib.auth.password_validation import validate_password
 from authentification.models import Voter
-import regex
 
 
 class VoterSerializer(UserCreateSerializer):
