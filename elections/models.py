@@ -50,6 +50,8 @@ class Candidate(models.Model):
     last_name = models.CharField(max_length=100, blank=True)
     first_name = models.CharField(max_length=100, blank=True)
 
+    candidate_photo = models.CharField(max_length=400, blank=True)
+
     party = models.ForeignKey(Party, on_delete=models.CASCADE)
     elections = models.ManyToManyField(Election)
 

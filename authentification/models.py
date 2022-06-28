@@ -11,6 +11,7 @@ class Voter(AbstractUser):
     electoral_number = models.BigIntegerField(blank=False, unique=True)
 
     permissions = models.ManyToManyField('elections.ElectionType')
+    votes = models.ManyToManyField('elections.Round')
 
     username = models.CharField(max_length=100, default="None")
 

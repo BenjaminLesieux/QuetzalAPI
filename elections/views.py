@@ -4,7 +4,7 @@ import uuid
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -16,7 +16,16 @@ class ElectionsView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
+        elections = Election.objects.all()
 
+        data = {}
+
+        for election in elections:
+            data[election.election_id] = election.type.__str__()
+
+        return Response(data, status=status.HTTP_200_OK)
+
+    def post(self, request):
         elections = Election.objects.all()
 
         print(request.POST)
@@ -25,8 +34,8 @@ class ElectionsView(APIView):
 
         # if a user parameter was sent in the request, we only send the elections in which
         # the user has the permission to vote in
-        if 'voter_id' in request.POST:
-            voter = Voter.objects.all().get(voter_id=request.data["voter_id"])
+        if 'electoral_number' in request.POST:
+            voter = Voter.objects.all().get(voter_id=request.data["electoral_number"])
             for election in elections:
                 if voter.permissions.filter(type_id=election.type.type_id).exists():
                     query_elections.append(election)
@@ -75,11 +84,10 @@ class ElectionInfoView(APIView):
 
 
 class VoteCreationView(APIView):
-    permission_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         body = request.data
-        headers = request.META
 
         new_vote = Vote.objects.create(
             vote_id=uuid.uuid4(),
@@ -93,11 +101,12 @@ class VoteCreationView(APIView):
                 {"error": f'The election of id {body["election_id"]} does not exist'}
             )
 
-        user_id = Token.objects.get(key=headers["Authorization"]).user_id
+        token = request.auth.key
+        user_id = Token.objects.get(key=token).user_id
         user = Voter.objects.all().filter(voter_id=user_id)
 
         if user.exists():
-            if not user.first().permissions.filter(type_id=election.type.type_id).exists():
+            if not user.first().permissions.filter(type_id=election.first().type.type_id).exists():
                 return Response(
                     {"error": f'tried to cast a vote without '
                               f'the authorization for election {election.first().__str__()}'},
@@ -122,6 +131,15 @@ class VoteCreationView(APIView):
                           f' with round of id {body["round_id"]}'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+        if user.first().votes.filter(round_id=rnd.first().round_id).exists():
+            return Response(
+                {"error": f'the voter of id {user.first().voter_id} has already cast a vote '
+                          f'for round of id {rnd.first().round_id}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        else:
+            user.first().votes.add(rnd.first().round_id)
 
         new_vote.submissions.add(body["round_id"])
         new_vote.save()
@@ -159,10 +177,11 @@ class CandidatesView(APIView):
             data[candidate.candidate_id] = {
                 "last_name": candidate.last_name,
                 "first_name": candidate.first_name,
-                "candidate_photo": candidate.first_name,
+                "candidate_photo": candidate.candidate_photo,
                 "party": candidate.party.name,
                 "party_picture": candidate.party.logo,
-                "party_website": candidate.party.website
+                "party_website": candidate.party.website,
+                "candidate_id": candidate.candidate_id
             }
 
         return Response(data, status=status.HTTP_200_OK)
@@ -181,8 +200,6 @@ class CandidateInfoView(APIView):
             )
 
         all_candidates = Candidate.objects.all()
-        election_candidates = []
-
         candidate = all_candidates.filter(candidate_id=candidate_id).first()
 
         if not candidate.elections.filter(election_id=election_id).exists():
@@ -193,10 +210,11 @@ class CandidateInfoView(APIView):
         data = {
             "last_name": candidate.last_name,
             "first_name": candidate.first_name,
-            "candidate_photo": candidate.first_name,
             "party": candidate.party.name,
             "party_picture": candidate.party.logo,
-            "party_website": candidate.party.website
+            "party_website": candidate.party.website,
+            "candidate_id": candidate.candidate_id,
+            "candidate_photo": candidate.candidate_photo
         }
 
         return Response(data, status=status.HTTP_200_OK)

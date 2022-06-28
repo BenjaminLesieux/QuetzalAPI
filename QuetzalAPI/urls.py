@@ -18,7 +18,7 @@ from django.urls import path, include, re_path
 from rest_framework.decorators import permission_classes
 from rest_framework.schemas import get_schema_view
 
-schema_view = get_schema_view(title='QuetzalAPI', permission_classes=('AllowAny',))
+schema_view = get_schema_view(title='QuetzalAPI')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
