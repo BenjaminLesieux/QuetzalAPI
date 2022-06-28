@@ -87,9 +87,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': "quetzal",
         'USER': "root",
-        'PASSWORD': "password",
+        'PASSWORD': "root",
         'HOST': 'localhost',
-        'PORT': '3306',
+        'PORT': '3308',
     }
 }
 
@@ -125,7 +125,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = ("http://10.3.202.2:8080", "http://10.3.217.230:8081", "http://localhost:8080")
+CORS_ORIGIN_WHITELIST = ("http://10.3.202.2:8080", "http://10.3.217.230:8081", "http://localhost:8080", "http://localhost:8081" )
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
@@ -151,9 +151,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'authentification.Voter'
 
 DJOSER = {
+    'SET_PASSWORD_RETYPE': True,
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
+    'PASSWORD_RESET_CONFIRM_URL': 'api/v1/auth/password/reset/confirm/{uid}/{token}',
     'SEND_CONFIRMATION_EMAIL': True,
     'ACTIVATION_URL': 'api/v1/auth/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'SERIALIZERS': {
         #'user_create': 'authentification.serializers.VoterSerializer'
     },
