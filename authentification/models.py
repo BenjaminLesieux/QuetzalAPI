@@ -11,9 +11,13 @@ class Voter(AbstractUser):
     electoral_number = models.BigIntegerField(blank=False, unique=True)
 
     permissions = models.ManyToManyField('elections.ElectionType')
+    votes = models.ManyToManyField('elections.Round')
 
     username = models.CharField(max_length=100, default="None")
 
     USERNAME_FIELD = 'electoral_number'
     REQUIRED_FIELDS = ('email', 'last_name', 'first_name', 'username')
+
+    def __str__(self):
+        return self.last_name + " " + self.first_name
 

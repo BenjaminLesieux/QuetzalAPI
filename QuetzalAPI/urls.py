@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
+from rest_framework.decorators import permission_classes
 from rest_framework.schemas import get_schema_view
 
 schema_view = get_schema_view(title='QuetzalAPI')

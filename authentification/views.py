@@ -1,4 +1,5 @@
 import requests
+from django.http import HttpResponseRedirect
 from rest_framework import status
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.response import Response
@@ -7,12 +8,12 @@ from rest_framework.response import Response
 @permission_classes('AllowAny', )
 @api_view(('GET',))
 def activation_view(request, uid, token):
-    requests.post("http://10.3.201.28:8000/api/v1/users/activation/",
+    requests.post("http://10.13.200.195:8000/api/v1/users/activation/",
                   json={
                       "uid": uid,
                       "token": token
                   })
-    return Response({'msg': 'The account was created !'}, status=status.HTTP_200_OK)
+    return HttpResponseRedirect(request.GET.get('http://10.13.216.93:8081/reinitialisation'))
 
 
 @permission_classes('AllowAny', )
@@ -36,3 +37,4 @@ def reset_password_view(request, email):
                       "email": email,
                   })
     return Response({'msg': 'you can change your password'}, status=status.HTTP_200_OK)
+
