@@ -79,6 +79,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'QuetzalAPI.wsgi.application'
 
+STATIC_ROOT = "static"
 STATIC_URL = "static/"
 
 # Database
