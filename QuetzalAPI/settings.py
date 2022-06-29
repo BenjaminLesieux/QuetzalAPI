@@ -79,7 +79,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'QuetzalAPI.wsgi.application'
 
-STATIC_URL = ""
+STATIC_URL = "static/"
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
