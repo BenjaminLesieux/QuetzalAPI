@@ -123,25 +123,37 @@ class ElectionNearest(APIView):
                 for rnd in election.progress.all():
                     dates.append(rnd.date)
 
-        selected_date = datetime.date(2020, 12, 12)
+        selected_date = Round.objects.all().first().date
 
         for dat in dates:
-            if dat < current_date:
-                continue
-
-            if (dat - current_date) < (selected_date - current_date):
+            if (dat - current_date) < (selected_date - current_date) or selected_date < current_date:
                 selected_date = dat
 
-        selected_round = Round.objects.all().get(date)
+        selected_round = Round.objects.all().filter(date=selected_date)
 
-        if not selected_round:
+        if not selected_round.exists():
             return JsonResponse(
                 {"error": f"No round found for date {selected_date}"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        corresponding_election = None
+
+        for election in Election.objects.all():
+            if election.progress.contains(selected_round.get()):
+                corresponding_election = election
+                break
+
+        if not corresponding_election:
+            return JsonResponse(
+                {"error": f"There was an error finding the election corresponding to"
+                          f"round of id {selected_round.get().round_id} "},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         return JsonResponse(
-            {"msg": selected_round.__str__()},
+            {"nearest_round": selected_round.get().__str__(),
+             "election": corresponding_election.__str__()},
             status=status.HTTP_200_OK
         )
 
