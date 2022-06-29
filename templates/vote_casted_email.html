@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quetzal</title>
+</head>
+<body>
+    <header>
+        <h1> Merci {{ user.first_name }} {{ user.last_name }} d'avoir accompli votre devoir de citoyen !</h1>
+    </header>
+    <main>
+        <p>Le quetzal est un oiseau qui symbolise la liberté, en remplissant votre devoir de citoyen
+            vous exprimez la votre et permettez à la France d'avancer. Votre anonymat est garanti par
+            notre équipe et votre vote n'appartient qu'à vous.
+
+            Votre vote pour les elections {{ election.type.type }} au tour {{ rnd.round_id }} a bien été ajouté.
+        </p>
+
+        <img src="https://st3.depositphotos.com/7402484/13918/i/600/depositphotos_139183568-stock-photo-resplendent-quetzal-in-costa-rica.jpg" alt="petit quetzal">
+    </main>
+</body>
+</html>

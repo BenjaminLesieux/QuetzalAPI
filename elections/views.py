@@ -1,6 +1,13 @@
+import datetime
 import json
 import uuid
+from datetime import date
 
+from django.core.mail import EmailMultiAlternatives
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.template import Context
+from django.template.loader import get_template
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
@@ -39,6 +46,11 @@ class ElectionsView(APIView):
             for election in elections:
                 if voter.permissions.filter(type_id=election.type.type_id).exists():
                     query_elections.append(election)
+
+            # for election in query_elections:
+            #     for rnd in election.progress.all():
+            #         if voter.votes.contains(rnd):
+            #             query_elections.remove(election)
 
         if len(query_elections) != 0:
             elections = query_elections
@@ -83,72 +95,133 @@ class ElectionInfoView(APIView):
                         } | data, status=status.HTTP_200_OK)
 
 
+class ElectionNearest(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        token = request.auth.key
+
+        if not token:
+            return JsonResponse(
+                {"error": "The authentication token provided does not correspond to any known user"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user_id = Token.objects.get(key=token).user_id
+        user = Voter.objects.get(voter_id=user_id)
+
+        allowed_election_types = user.permissions.all()
+
+        # tricky line returning all the different elections by type
+        all_elections = [election for election in (Election.objects.all().filter(type=election_type).all() for election_type in allowed_election_types)]
+
+        current_date = date.today()
+        dates = []
+
+        for elections in all_elections:
+            for election in elections:
+                for rnd in election.progress.all():
+                    dates.append(rnd.date)
+
+        selected_date = datetime.date(2020, 12, 12)
+
+        for dat in dates:
+            if dat < current_date:
+                continue
+
+            if (dat - current_date) < (selected_date - current_date):
+                selected_date = dat
+
+        selected_round = Round.objects.all().get(date)
+
+        if not selected_round:
+            return JsonResponse(
+                {"error": f"No round found for date {selected_date}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return JsonResponse(
+            {"msg": selected_round.__str__()},
+            status=status.HTTP_200_OK
+        )
+
+
 class VoteCreationView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         body = request.data
+        election = Election.objects.get(election_id=body['election_id'])
 
-        new_vote = Vote.objects.create(
-            vote_id=uuid.uuid4(),
-            candidate_id=body['candidate_id']
-        )
-
-        election = Election.objects.all().filter(election_id=body['election_id'])
-
-        if not election.exists():
-            return Response(
-                {"error": f'The election of id {body["election_id"]} does not exist'}
+        if not election:
+            return JsonResponse(
+                {"error": f'The election of id {body["election_id"]} does not exist'},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
         token = request.auth.key
-        user_id = Token.objects.get(key=token).user_id
-        user = Voter.objects.all().filter(voter_id=user_id)
 
-        if user.exists():
-            if not user.first().permissions.filter(type_id=election.first().type.type_id).exists():
-                return Response(
+        if not token:
+            return JsonResponse(
+                {"error": "The authentication token provided does not correspond to any known user"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user_id = Token.objects.get(key=token).user_id
+        user = Voter.objects.get(voter_id=user_id)
+
+        if user:
+            if not user.permissions.filter(type_id=election.type.type_id).exists():
+                return JsonResponse(
                     {"error": f'tried to cast a vote without '
-                              f'the authorization for election {election.first().__str__()}'},
+                              f'the authorization for election {election.__str__()}'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-        candidate = Candidate.objects.all().filter(candidate_id=body['candidate_id'])
+        candidate = Candidate.objects.get(candidate_id=body['candidate_id'])
 
-        if not candidate.exists():
-            return Response(
+        if not candidate:
+            return JsonResponse(
                 {"error": f'the candidate of id {body["candidate_id"]} does not exist'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        rnd = Round.objects.all().filter(round_id=body['round_id'])
+        rnd = Round.objects.get(round_id=body['round_id'])
 
         # user should not be able to cast a vote in a round that doesn't correspond to the election
         # he wants to vote in
-        if not rnd.exists() and not election.first().progress.filter(round_id=body["round_id"]).exists():
-            return Response(
+        if not rnd or not election.progress.get(round_id=rnd.round_id):
+            return JsonResponse(
                 {"error": f'the election of id {body["election_id"]} is not linked'
                           f' with round of id {body["round_id"]}'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        if user.first().votes.filter(round_id=rnd.first().round_id).exists():
-            return Response(
-                {"error": f'the voter of id {user.first().voter_id} has already cast a vote '
-                          f'for round of id {rnd.first().round_id}'},
+        if user.votes.count() != 0 and user.votes.contains(rnd):
+            return JsonResponse(
+                {"error": f'the voter of id {user.voter_id} has already cast a vote '
+                          f'for round of id {rnd.round_id}'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         else:
-            user.first().votes.add(rnd.first().round_id)
+            user.votes.add(rnd.round_id)
 
+        new_vote = Vote.objects.create(
+            vote_id=uuid.uuid4(),
+            candidate_id=body['candidate_id']
+        )
         new_vote.submissions.add(body["round_id"])
         new_vote.save()
 
-        return Response(
-            {"msg": f'The vote {new_vote.vote_id} has been fully registered of election of id {body["election_id"]}'
-                    f' at round {body["round_id"]}'},
-            status=status.HTTP_200_OK
-        )
+        htmly = get_template('vote_casted_email.html')
+
+        subject, from_email, to = 'Merci pour votre vote !', 'app.quetzal@gmail.com', user.email
+        html_content = htmly.render(locals())
+        msg = EmailMultiAlternatives(subject, "", from_email, [to])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
+        return render(request, 'vote_casted_email.html', locals())
 
 
 class CandidatesView(APIView):
@@ -218,5 +291,3 @@ class CandidateInfoView(APIView):
         }
 
         return Response(data, status=status.HTTP_200_OK)
-
-
