@@ -152,8 +152,11 @@ class ElectionNearest(APIView):
             )
 
         return JsonResponse(
-            {"nearest_round": selected_round.get().__str__(),
-             "election": corresponding_election.__str__()},
+            {
+                "round_id": selected_round.get().round_id,
+                "election_id": corresponding_election.election_id,
+                "type": corresponding_election.type.type
+            },
             status=status.HTTP_200_OK
         )
 
