@@ -79,6 +79,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'QuetzalAPI.wsgi.application'
 
+STATIC_ROOT = ""
+
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
