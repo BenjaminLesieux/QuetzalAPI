@@ -7,7 +7,6 @@ Quetzal est une plateforme de vote en ligne qui a pour but de rendre le vote acc
 
 ![Logo](https://cdn.discordapp.com/attachments/980881825654251600/989795697773670420/Quetzal_Light_dark.png)
 
-
 ## Frontend
 
 - [@Link to frontend](https://github.com/BenjaminLesieux/QuetzalFrontend)
@@ -29,7 +28,7 @@ Pour lancer ce projet, il vous faut :
 ```bash
   npm install npm@latest -g
 ```
-- Requirements
+- requirements
 
 ```bash
   pip install requirements.txt
@@ -40,17 +39,29 @@ Pour lancer ce projet, il vous faut :
 ```bash
 c:\>python -m venv c:\path\to\myenv
 ```
-- Install cli : 
+- Install cli 
 
 ```bash
 npm install -g @vue/cli
+```
+
+- install packages
+
+```bash
+npm install in path/QuetzalFrontend
 ```
 ## Lancement
 
 Lancer le serveur :
 
+- run backend
 ```bash
-  python manage.py runserver
+python manage.py runserver
+```
+- run frontend
+
+```bash
+npm run serve
 ```
     
 ## Aperçu
@@ -62,7 +73,7 @@ Lancer le serveur :
 | Color             | Hex                                                                |
 | ----------------- | ------------------------------------------------------------------ |
 | Light red | ![#FCBFBF](https://via.placeholder.com/15/FCBFBF?text=+) #FCBFBF |
-| Light blue | ![#00d1a0](https://via.placeholder.com/15/ADD2F5?text=+) #00d1a0 |
+| Light blue | ![#00D1A0](https://via.placeholder.com/15/ADD2F5?text=+) #00D1A0 |
 | Red | ![#FF0000](https://via.placeholder.com/15/FF0000?text=+) #FF0000 |
 | Blue | ![#0000FF](https://via.placeholder.com/15/0000FF?text=+) #0000FF |
 
