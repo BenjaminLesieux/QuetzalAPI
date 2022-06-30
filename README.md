@@ -12,6 +12,7 @@ Quetzal est une plateforme de vote en ligne qui a pour but de rendre le vote acc
 
 - [@Link to frontend](https://github.com/BenjaminLesieux/QuetzalFrontend)
 
+
 ## Tech Stack
 
 **Client:** Vue
@@ -28,12 +29,28 @@ Pour lancer ce projet, il vous faut :
 ```bash
   npm install npm@latest -g
 ```
+- Requirements
+
+```bash
+  pip install requirements.txt
+```
+
+- create a venv
+
+```bash
+c:\>python -m venv c:\path\to\myenv
+```
+- Install cli : 
+
+```bash
+npm install -g @vue/cli
+```
 ## Lancement
 
 Lancer le serveur :
 
 ```bash
-  npm run serve
+  python manage.py runserver
 ```
     
 ## Aperçu
@@ -44,10 +61,10 @@ Lancer le serveur :
 
 | Color             | Hex                                                                |
 | ----------------- | ------------------------------------------------------------------ |
-| Example Color | ![#FCBFBF](https://via.placeholder.com/15/FCBFBF?text=+) #FCBFBF |
-| Example Color | ![#00d1a0](https://via.placeholder.com/15/ADD2F5?text=+) #00d1a0 |
-| Example Color | ![#FF0000](https://via.placeholder.com/15/FF0000?text=+) #FF0000 |
-| Example Color | ![#0000FF](https://via.placeholder.com/15/0000FF?text=+) #0000FF |
+| Light red | ![#f8f8f8](https://via.placeholder.com/15/FCBFBF?text=+) #FCBFBF |
+| Light blue | ![#00d1a0](https://via.placeholder.com/15/ADD2F5?text=+) #00d1a0 |
+| Red | ![#00b48a](https://via.placeholder.com/15/FF0000?text=+) #FF0000 |
+| Blue | ![#0a192f](https://via.placeholder.com/15/0000FF?text=+) #0000FF |
 
 
 
