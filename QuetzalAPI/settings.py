@@ -10,10 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
+import ssl
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 import dj_database_url
+from django.conf.global_settings import DATABASES
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -90,15 +92,15 @@ STATIC_URL = "static/"
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': "quetzal",
-#         'USER': "root",
-#         'PASSWORD': "password",
-#         'HOST': 'localhost',
+#         'NAME': "heroku_74f3f9d782d05cb",
+#         'USER': "b92bcf4d2d064e",
+#         'PASSWORD': "5047f5c7",
+#         'HOST': 'mysql://b92bcf4d2d064e:5047f5c7@eu-cdbr-west-03.cleardb.net/heroku_74f3f9d782d05cb?reconnect=true',
 #         'PORT': '3306',
 #     }
 # }
 
-DATABASES = {'default': dj_database_url.config(default=os.environ['DATABASE_URL'], engine='django_cockroachdb')}
+DATABASES['default'] = dj_database_url.parse('mysql://b92bcf4d2d064e:5047f5c7@eu-cdbr-west-03.cleardb.net/heroku_74f3f9d782d05cb', 'django.db.backends.mysql')
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
