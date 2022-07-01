@@ -1,1 +1,1 @@
-web: gunicorn QuetzalApi.wsgi --log-file -
+web: gunicorn QuetzalApi:app
