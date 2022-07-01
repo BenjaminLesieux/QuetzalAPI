@@ -1,1 +1,1 @@
-web: gunicorn QuetzalApi:app
+web: gunicorn voteatquetzal:app
