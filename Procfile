@@ -1,0 +1,1 @@
+web: gunicorn voteatquetzal.wspipgi --log-file -
