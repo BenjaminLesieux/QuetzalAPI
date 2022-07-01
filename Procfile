@@ -1,1 +1,1 @@
-web: gunicorn voteatquetzal.wspipgi --log-file -
+web: gunicorn QuetzalAPI.wsgi --log-file -
