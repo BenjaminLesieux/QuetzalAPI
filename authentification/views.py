@@ -8,7 +8,7 @@ from rest_framework.response import Response
 @permission_classes('AllowAny', )
 @api_view(('GET',))
 def activation_view(request, uid, token):
-    requests.post("http://10.3.203.13:8000/api/v1/users/activation/",
+    requests.post("https://voteatquetzal.herokuapp.com/api/v1/users/activation/",
                   json={
                       "uid": uid,
                       "token": token
@@ -19,7 +19,7 @@ def activation_view(request, uid, token):
 @permission_classes('AllowAny', )
 @api_view(('GET',))
 def reset_password_view(request, email):
-    requests.post("http://10.3.203.13:8000/api/v1/users/reset_password/",
+    requests.post("https://voteatquetzal.herokuapp.com/api/v1/users/reset_password/",
                   json={
                       "email": email,
                   })
