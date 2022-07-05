@@ -13,7 +13,7 @@ def activation_view(request, uid, token):
                       "uid": uid,
                       "token": token
                   })
-    return HttpResponseRedirect(request.GET.get('https://vote-quetzal.herokuapp.com/activated'))
+    return HttpResponseRedirect(request.GET.get('https://vote-quetzal.herokuapp.com/activation'))
 
 
 @permission_classes('AllowAny', )
