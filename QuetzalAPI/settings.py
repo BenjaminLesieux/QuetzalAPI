@@ -136,7 +136,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = ("http://10.3.202.2:8080", "http://10.3.217.230:8081", "http://localhost:8080", "http://localhost:8081" )
+CORS_ORIGIN_WHITELIST = ("http://10.3.202.2:8080", "http://10.3.217.230:8081", "http://localhost:8080", "http://localhost:8081", "https://vote-quetzal.herokuapp.com" )
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
