@@ -13,7 +13,7 @@ def activation_view(request, uid, token):
                       "uid": uid,
                       "token": token
                   })
-    return HttpResponseRedirect(request.GET.get('http://10.3.202.196:8080/activated'))
+    return HttpResponseRedirect(request.GET.get('https://vote-quetzal.herokuapp.com/activated'))
 
 
 @permission_classes('AllowAny', )
@@ -29,5 +29,5 @@ def reset_password_view(request, email):
 @permission_classes('AllowAny', )
 @api_view(('GET',))
 def redirect_password_change(request, uid, token):
-    return HttpResponseRedirect(redirect_to=f'http://10.13.216.93:8081/reinitialisation/{uid}/{token}')
+    return HttpResponseRedirect(redirect_to=f'https://vote-quetzal.herokuapp.com/reinitialisation/{uid}/{token}')
 
