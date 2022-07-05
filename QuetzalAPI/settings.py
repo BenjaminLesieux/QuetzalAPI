@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'QuetzalAPI.wsgi.application'
 
 STATIC_ROOT = "static"
 STATIC_URL = "static/"
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
