@@ -188,8 +188,11 @@ class VoteCreationView(APIView):
         if user:
             if not user.permissions.filter(type_id=election.type.type_id).exists():
                 return JsonResponse(
-                    {"error": f'tried to cast a vote without '
-                              f'the authorization for election {election.__str__()}'},
+                    {
+                     "error": f'tried to cast a vote without '
+                              f'the authorization for election {election.__str__()}',
+                     "permissions": True
+                    },
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
@@ -208,14 +211,18 @@ class VoteCreationView(APIView):
         if not rnd or not election.progress.get(round_id=rnd.round_id):
             return JsonResponse(
                 {"error": f'the election of id {body["election_id"]} is not linked'
-                          f' with round of id {body["round_id"]}'},
+                          f' with round of id {body["round_id"]}',
+                 "round": True
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         if user.votes.count() != 0 and user.votes.contains(rnd):
             return JsonResponse(
                 {"error": f'the voter of id {user.voter_id} has already cast a vote '
-                          f'for round of id {rnd.round_id}'},
+                          f'for round of id {rnd.round_id}',
+                 "votes": True
+                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
         else:
